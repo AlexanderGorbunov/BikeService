@@ -17,6 +17,8 @@ class MainActivity : AppCompatActivity() , MainContract.View{
     @Inject
     lateinit var presenter: MainContract.Presenter
 
+    var isNFCFra : Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -40,6 +42,7 @@ class MainActivity : AppCompatActivity() , MainContract.View{
                 .disallowAddToBackStack()
                 .replace(R.id.main_frame, ApiFragment().newInstance(), ApiFragment.TAG)
                 .commit()
+            isNFCFra = false
         } else {}
     }
 
@@ -49,6 +52,7 @@ class MainActivity : AppCompatActivity() , MainContract.View{
                 .addToBackStack(null)
                 .replace(R.id.main_frame, NFCFragment().newInstance(), NFCFragment.TAG)
                 .commit()
+            isNFCFra = true
         } else {}
     }
 
@@ -59,6 +63,19 @@ class MainActivity : AppCompatActivity() , MainContract.View{
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         setIntent(intent)
+        //Toast.makeText(this, "onNewIntent", Toast.LENGTH_SHORT).show()
         presenter.onNFCMessaging(this, intent)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        //Toast.makeText(this, "onPause", Toast.LENGTH_SHORT).show()
+        presenter.enableNFCDispatching(false, this)
+    }
+    override fun onResume() {
+        super.onResume()
+        //Toast.makeText(this, "onResume", Toast.LENGTH_SHORT).show()
+        if (isNFCFra)
+            presenter.enableNFCDispatching(true, this)
     }
 }

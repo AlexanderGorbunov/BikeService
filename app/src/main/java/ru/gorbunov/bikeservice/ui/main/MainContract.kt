@@ -17,5 +17,7 @@ class MainContract {
         //fun onDrawerOptionAboutClick()
         fun onNFCFragmentReady(context: Context)
         fun onNFCMessaging(context: Context, intent: Intent?)
+
+        fun enableNFCDispatching(flag : Boolean, context: Context)
     }
 }

@@ -38,6 +38,28 @@ class MainPresenter: MainContract.Presenter {
         //Toast.makeText(context, "onNFCFragmentReady", Toast.LENGTH_SHORT).show()
         nfcAdapter = NfcAdapter.getDefaultAdapter(context)
         if (nfcAdapter != null) {
+            enableNFCDispatching(true, context)
+        }
+        else
+        {
+            view.showError("Необходимо устройство с NFC")
+        }
+    }
+
+    override fun onNFCMessaging(context: Context, intent: Intent?) {
+        if (intent!!.action != null) {
+            val mTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG) as Tag
+            Log.d("tag", SubUtils.toHex(mTag.id))
+            Toast.makeText(context, String(mTag.id), Toast.LENGTH_SHORT).show()
+            if ((context as MainActivity).supportFragmentManager.findFragmentByTag(NFCFragment.TAG) != null) {
+                (context.supportFragmentManager.findFragmentByTag(NFCFragment.TAG) as NFCFragment).presenter.loadDataAll(String(mTag.id))
+            }
+        }
+    }
+
+    override fun enableNFCDispatching(flag: Boolean, context: Context) {
+        if (flag && nfcAdapter != null)
+        {
             pendingIntent = PendingIntent.getActivity(
                 context, 0,
                 Intent(context, context.javaClass)
@@ -57,17 +79,9 @@ class MainPresenter: MainContract.Presenter {
         }
         else
         {
-            view.showError("Необходимо устройство с NFC")
-        }
-    }
-
-    override fun onNFCMessaging(context: Context, intent: Intent?) {
-        if (intent!!.action != null) {
-            val mTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG) as Tag
-            Log.d("tag", SubUtils.toHex(mTag.id))
-            Toast.makeText(context, String(mTag.id), Toast.LENGTH_SHORT).show()
-            if ((context as MainActivity).supportFragmentManager.findFragmentByTag(NFCFragment.TAG) != null) {
-                (context.supportFragmentManager.findFragmentByTag(NFCFragment.TAG) as NFCFragment).presenter.loadDataAll(String(mTag.id))
+            if (nfcAdapter != null)
+            {
+                nfcAdapter.disableForegroundDispatch(context as MainActivity);
             }
         }
     }
