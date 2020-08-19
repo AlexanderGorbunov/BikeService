@@ -1,5 +1,9 @@
 package ru.gorbunov.bikeservice.Model
 
+import java.util.*
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+import kotlin.collections.ArrayList
 import kotlin.experimental.and
 
 
@@ -19,7 +23,40 @@ object SubUtils {
 
     fun normalizeNFCCode(original_code : String) : String
     {
-        return original_code
+        val s = split(original_code)
+        val s2 = getDub(s)
+        return getBikeCode(s2)
+    }
+
+    fun split(str: String?): List<String> {
+        val pattern: Pattern = Pattern.compile("(\\w+)|(\\.{3})|[^\\s]")
+        val matcher: Matcher = pattern.matcher(str)
+        val list: MutableList<String> = ArrayList()
+        while (matcher.find()) {
+            list.add(matcher.group())
+        }
+        return list
+    }
+
+    fun getDub(list : List<String>) : ArrayList<String>
+    {
+        var dubls = arrayListOf<String>()
+        for (string in list) {
+            if (Collections.frequency(list, string) > 1 && !dubls.contains(string)) {
+                dubls.add(string)
+                //list.removeAt(list.indexOf(strings))
+            }
+        }
+        return dubls
+    }
+
+    fun getBikeCode(dubls: List<String>) : String
+    {
+        for (string in dubls) {
+            if (string.length > 1)
+                return string
+        }
+        return ""
     }
 
     /*fun toReversedHex(bytes: ByteArray): String {

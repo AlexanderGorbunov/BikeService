@@ -50,7 +50,7 @@ class MainPresenter: MainContract.Presenter {
         if (intent!!.action != null) {
             val mTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG) as Tag
             Log.d("tag", SubUtils.toHex(mTag.id))
-            Toast.makeText(context, String(mTag.id), Toast.LENGTH_SHORT).show()
+            //Toast.makeText(context, String(mTag.id), Toast.LENGTH_SHORT).show()
             if ((context as MainActivity).supportFragmentManager.findFragmentByTag(NFCFragment.TAG) != null) {
                 (context.supportFragmentManager.findFragmentByTag(NFCFragment.TAG) as NFCFragment).presenter.loadDataAll(String(mTag.id))
             }
